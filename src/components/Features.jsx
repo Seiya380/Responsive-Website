@@ -38,12 +38,13 @@ export const BentoTilt = ({ children, className = "" }) => {
   );
 };
 
-export const BentoCard = ({ src, title, description, isComingSoon }) => {
+export const BentoCard = ({ src, title, description, isComingSoon, audioSrc }) => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [hoverOpacity, setHoverOpacity] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const hoverButtonRef = useRef(null);
   const videoRef = useRef(null);
+  const audioRef = useRef(null);
 
   const handleMouseMove = (event) => {
     if (!hoverButtonRef.current) return;
@@ -58,8 +59,70 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
   const handleMouseEnter = () => setHoverOpacity(1);
   const handleMouseLeave = () => setHoverOpacity(0);
 
+  // Audio hover handlers with fade effect
+  const fadeIntervalRef = useRef(null);
+
+  const handleCardMouseEnter = () => {
+    if (audioRef.current && audioSrc) {
+      // Clear any existing fade interval
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+      
+      // Start with volume at 0 and fade in
+      audioRef.current.volume = 0;
+      audioRef.current.loop = true;
+      audioRef.current.play().catch(() => {
+        // Audio play may fail due to browser autoplay policies
+      });
+
+      // Fade in over 500ms
+      const fadeInDuration = 500;
+      const fadeStep = 50;
+      const volumeIncrement = 1 / (fadeInDuration / fadeStep);
+      
+      fadeIntervalRef.current = setInterval(() => {
+        if (audioRef.current) {
+          const newVolume = Math.min(audioRef.current.volume + volumeIncrement, 1);
+          audioRef.current.volume = newVolume;
+          if (newVolume >= 1) {
+            clearInterval(fadeIntervalRef.current);
+          }
+        }
+      }, fadeStep);
+    }
+  };
+
+  const handleCardMouseLeave = () => {
+    if (audioRef.current && audioSrc) {
+      // Clear any existing fade interval
+      if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+
+      // Fade out over 300ms
+      const fadeOutDuration = 300;
+      const fadeStep = 50;
+      const volumeDecrement = audioRef.current.volume / (fadeOutDuration / fadeStep);
+
+      fadeIntervalRef.current = setInterval(() => {
+        if (audioRef.current) {
+          const newVolume = Math.max(audioRef.current.volume - volumeDecrement, 0);
+          audioRef.current.volume = newVolume;
+          if (newVolume <= 0) {
+            clearInterval(fadeIntervalRef.current);
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+          }
+        }
+      }, fadeStep);
+    }
+  };
+
   return (
-    <div className="relative size-full">
+    <div 
+      className="relative size-full"
+      onMouseEnter={handleCardMouseEnter}
+      onMouseLeave={handleCardMouseLeave}
+    >
+      {/* Hidden audio element for hover sound */}
+      {audioSrc && <audio ref={audioRef} src={audioSrc} preload="auto" />}
       <video
         src={src}
         loop
@@ -115,6 +178,7 @@ const Features = () => (
       <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
         <BentoCard
           src="videos/feature-1.mp4"
+          audioSrc="audio/loop.mp3"
           title={
             <>
               Ou<b>ter</b>wilds
