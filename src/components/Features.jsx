@@ -178,7 +178,7 @@ const Features = () => (
       <BentoTilt className="border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]">
         <BentoCard
           src="videos/feature-1.mp4"
-          audioSrc="audio/loop.mp3"
+          audioSrc="audio/Outer_Wilds.mp3"
           title={
             <>
               Ou<b>ter</b>wilds
@@ -191,6 +191,7 @@ const Features = () => (
         <BentoTilt className="bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2">
           <BentoCard
             src="videos/feature-2.mp4"
+            audioSrc="audio/Clair_obscur.mp3"
             title={
               <>
                 Cl<b>air</b>Obscur
@@ -202,6 +203,7 @@ const Features = () => (
         <BentoTilt className="bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0">
           <BentoCard
             src="videos/feature-3.mp4"
+            audioSrc="audio/SMG.mp3"
             title={
               <>
                 Su<b>per Mario</b>Galaxy
@@ -213,6 +215,7 @@ const Features = () => (
         <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
           <BentoCard
             src="videos/feature-4.mp4"
+            audioSrc="audio/Undertale.mp3"
             title={
               <>
                 Und<b>ert</b>ale
